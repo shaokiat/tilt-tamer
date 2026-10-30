@@ -27,8 +27,10 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; }
+html { overflow-x: clip; }
 body {
   min-height: 100vh;
+  overflow-x: clip; /* hidden tooltips near the edge must never create a horizontal scrollbar */
   color: var(--text);
   background:
     radial-gradient(1200px 600px at 20% -10%, rgba(61, 220, 151, 0.07), transparent 60%),
@@ -62,8 +64,11 @@ kbd {
 .app { max-width: 1560px; margin: 0 auto; padding: 12px 22px 12px; }
 .layout {
   display: grid;
-  /* Side columns scale with the viewport; the range grid takes the rest. */
-  grid-template-columns: clamp(300px, 26vw, 360px) minmax(0, 1fr) clamp(236px, 22vw, 310px);
+  /* The drill is the main column and takes the free space; the range grid is a
+     compact reference with a capped width; stats is a narrow sidebar. */
+  --grid-col: clamp(340px, 31vw, 480px);
+  --stats-col: clamp(236px, 20vw, 300px);
+  grid-template-columns: minmax(360px, 1fr) var(--grid-col) var(--stats-col);
   gap: 16px;
   align-items: stretch;
   margin-top: 12px;
@@ -77,7 +82,7 @@ kbd {
   min-width: 0;
 }
 .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
-.drill { display: flex; flex-direction: column; }
+.drill { display: flex; flex-direction: column; container-type: inline-size; container-name: drill; }
 
 /* ---------- Header ---------- */
 .header { display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; }
@@ -118,7 +123,7 @@ kbd {
 .tip.term:hover .tip-trigger, .tip.term.is-open .tip-trigger { color: var(--correct); border-bottom-color: var(--correct); }
 .tip-body {
   position: absolute; z-index: 60;
-  width: max-content; max-width: 300px;
+  width: max-content; max-width: min(300px, calc(100vw - 32px));
   padding: 10px 12px; border-radius: 10px;
   background: #0d1311; border: 1px solid #2c3a35;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
@@ -143,7 +148,7 @@ kbd {
 .tip-top.tip-wide .tip-body::before { bottom: -10px; }
 .tip-text { display: block; }
 /* Stats column is narrow: keep its tooltip inside the column so it never leaves the viewport. */
-.leaks-tip .tip-body { width: calc(clamp(236px, 22vw, 310px) - 36px); }
+.leaks-tip .tip-body { width: calc(var(--stats-col, 280px) - 36px); }
 @media (max-width: 1023px) { .leaks-tip .tip-body { width: min(280px, calc(100vw - 48px)); } }
 
 /* Chen breakdown */
@@ -252,7 +257,7 @@ kbd {
 .btn-fold:hover:not(:disabled) { background: #283530; }
 .btn-raise { background: var(--raise); color: #1c0d08; box-shadow: 0 8px 20px rgba(255, 122, 89, 0.25); }
 .btn-raise:hover:not(:disabled) { background: #ff8d70; }
-.actions .btn:disabled:not(.is-chosen) { opacity: 0.35; box-shadow: none; }
+.actions .btn:disabled:not(.is-chosen) { opacity: 0.3; filter: saturate(0.15); box-shadow: none; }
 .btn.is-chosen { box-shadow: 0 0 0 2px var(--v), 0 8px 20px rgba(0, 0, 0, 0.3); }
 .btn.is-perfect { --v: var(--perfect); }
 .btn.is-correct { --v: var(--correct); }
@@ -318,7 +323,9 @@ kbd {
 .grid thead th:first-child, .grid tbody th { width: 18px; }
 .cell {
   /* Fit 13 rows into the viewport on laptops; clamp keeps cells readable. */
-  position: relative; height: clamp(24px, calc((100vh - 230px) / 14), 46px); padding: 0; overflow: hidden;
+  /* Roughly square cells from the grid column width, never taller than the viewport allows. */
+  position: relative; padding: 0; overflow: hidden;
+  height: max(20px, min(calc((var(--grid-col, 420px) - 56px) / 13), calc((100vh - 230px) / 14)));
   border-radius: 4px; background: var(--fold);
   text-align: center; vertical-align: middle;
 }
@@ -334,7 +341,7 @@ kbd {
   background: repeating-linear-gradient(135deg, var(--raise) 0 4px, #e86446 4px 7px);
 }
 .cell-label {
-  position: relative; font-size: 10.5px; font-weight: 600; letter-spacing: -0.02em;
+  position: relative; font-size: clamp(8.5px, calc(var(--grid-col, 420px) / 44), 10.5px); font-weight: 600; letter-spacing: -0.03em;
   color: rgba(232, 239, 234, 0.5); transition: color 0.3s;
 }
 .is-revealed .cell-label { color: rgba(232, 239, 234, 0.55); }
@@ -413,17 +420,45 @@ kbd {
 .leaks .small { text-align: right; }
 
 /* ---------- Responsive ---------- */
+/* Wide drill column (laptops): scale up the parts you actually look at.
+   Must come after the base rules so it wins on source order. */
+@container drill (min-width: 470px) {
+  .seat { padding: 9px 4px 8px; }
+  .seat-name { font-size: 15px; }
+  .seat-note { font-size: 10.5px; }
+  .seats-summary { font-size: 13px; }
+  .hand { gap: 26px; }
+  .card { width: 104px; height: 146px; border-radius: 12px; }
+  .card-corner { font-size: 23px; top: 9px; left: 11px; }
+  .card-pip { font-size: 58px; }
+  .hand-class { font-size: 46px; }
+  .hand-meta .small { font-size: 14px; }
+  .actions .btn { height: 66px; font-size: 19px; }
+  .verdict { font-size: 26px; }
+  .freq-row { font-size: 14px; }
+  .why { font-size: 15px; }
+  .btn-next { height: 46px; font-size: 15.5px; }
+  .feedback-placeholder { font-size: 14px; }
+  .settings { flex-direction: row; flex-wrap: wrap; gap: 8px 22px; }
+}
+
 /* Short laptop screens: slightly smaller cards so the drill column fits the viewport. */
 @media (max-height: 760px) and (min-width: 961px) {
   .card { width: 76px; height: 106px; }
   .card-pip { font-size: 40px; }
   .hand { margin-bottom: 12px; }
   .seats-wrap { margin-bottom: 10px; }
+  @container drill (min-width: 470px) {
+    .card { width: 92px; height: 128px; }
+    .card-pip { font-size: 50px; }
+    .hand-class { font-size: 42px; }
+    .actions .btn { height: 60px; }
+  }
 }
 
 /* Small laptops / tablets landscape: drill + range side by side, stats as a 3-column strip below. */
 @media (max-width: 1023px) and (min-width: 961px) {
-  .layout { grid-template-columns: minmax(300px, 340px) minmax(0, 1fr); }
+  .layout { --grid-col: clamp(320px, 38vw, 400px); grid-template-columns: minmax(0, 1fr) var(--grid-col); }
   .stats { grid-column: 1 / -1; }
   .stats-body { grid-template-columns: 1fr 1fr 1fr; gap: 0 22px; }
   .stats .overall { grid-template-columns: auto 1fr; align-items: center; gap: 16px; }
@@ -441,6 +476,15 @@ kbd {
     border-top: 1px solid var(--border);
   }
   .feedback-slot { margin-top: 0; }
+}
+/* Phones: tooltips become a sheet above the action bar, so they can never overflow the screen edge. */
+@media (max-width: 600px) {
+  .tip .tip-body,
+  .tip-wide .tip-body,
+  .leaks-tip .tip-body {
+    position: fixed; left: 12px; right: 12px; top: auto; bottom: calc(96px + env(safe-area-inset-bottom));
+    width: auto; max-width: none; translate: none; max-height: 60vh; overflow-y: auto;
+  }
 }
 @media (max-width: 520px) {
   .card { width: 68px; height: 96px; }

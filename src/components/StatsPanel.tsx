@@ -84,6 +84,7 @@ export function StatsPanel({ stats, onReset }: Props) {
         </ol>
       </div>
 
+      <div className="stats-body">
       <div className="stat-group">
         <h3>By position</h3>
         {POSITIONS.map((p) => (
@@ -119,6 +120,7 @@ export function StatsPanel({ stats, onReset }: Props) {
             ))}
           </ol>
         )}
+      </div>
       </div>
     </section>
   );

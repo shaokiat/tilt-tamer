@@ -9,7 +9,8 @@ import { RangeGrid } from './components/RangeGrid';
 import { SettingsBar } from './components/SettingsBar';
 import { StatsPanel } from './components/StatsPanel';
 import { dealHand, type Deal } from './lib/deal';
-import { explain } from './lib/explain';
+import { Tip } from './components/Tip';
+import { explainParts } from './lib/explain';
 import { raisePct } from './lib/generate';
 import { categoryOf } from './lib/hands';
 import { scoreAnswer, type ScoreResult } from './lib/scoring';
@@ -117,7 +118,7 @@ export default function App() {
           <ActionBar onAnswer={answer} result={result} />
           <FeedbackCard
             result={result}
-            explanation={result ? explain(deal.hand, deal.position, freqs, range) : ''}
+            spot={result ? explainParts(deal.hand, deal.position, freqs, range) : null}
             onNext={next}
             nextRef={nextRef}
             autoAdvance={settings.autoAdvance}
@@ -125,19 +126,29 @@ export default function App() {
           <SettingsBar settings={settings} onChange={setSettings} />
         </section>
 
-        <aside className="side">
-          <section className="panel" aria-label="Range chart">
-            <div className="panel-head">
-              <h2>
-                Range · <span className="accent">{deal.position}</span>
-              </h2>
-              <span className="muted small">opens {openPct.toFixed(0)}% of hands</span>
-            </div>
-            <RangeGrid range={range} highlight={deal.hand} revealed={revealed} />
-          </section>
+        <section className="panel range" aria-label="Range chart">
+          <div className="panel-head">
+            <h2>
+              Range · <span className="accent">{deal.position}</span>
+            </h2>
+            <Tip
+              placement="bottom"
+              align="end"
+              content={
+                <span className="tip-text">
+                  {deal.position} opens the strongest {openPct.toFixed(0)}% of all 1326 combos, ranked by Chen score.
+                  Hover the ⓘ How it works chip at the top for the full method.
+                </span>
+              }
+              className="term-quiet"
+            >
+              <span className="muted small">opens {openPct.toFixed(0)}% of hands ⓘ</span>
+            </Tip>
+          </div>
+          <RangeGrid range={range} position={deal.position} highlight={deal.hand} revealed={revealed} />
+        </section>
 
-          <StatsPanel stats={stats} onReset={reset} />
-        </aside>
+        <StatsPanel stats={stats} onReset={reset} />
       </main>
     </div>
   );

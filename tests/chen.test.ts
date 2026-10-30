@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chenScore, compareHands, ORDERED_HANDS } from '../src/lib/chen';
+import { chenBreakdown, chenScore, compareHands, ORDERED_HANDS, strengthRank } from '../src/lib/chen';
 import { parseHand } from '../src/lib/hands';
 
 describe('Chen score (RANGES.md §3.2)', () => {
@@ -65,6 +65,29 @@ describe('ordering', () => {
     for (let i = 1; i < ORDERED_HANDS.length; i++) {
       expect(chenScore(ORDERED_HANDS[i])).toBeLessThanOrEqual(chenScore(ORDERED_HANDS[i - 1]));
     }
+  });
+});
+
+describe('chenBreakdown', () => {
+  it('steps always sum to the raw score, and rounding up gives chenScore, for all 169 hands', () => {
+    for (const hand of ORDERED_HANDS) {
+      const b = chenBreakdown(hand);
+      const sum = b.steps.reduce((s, x) => s + x.delta, 0);
+      expect(sum, hand).toBeCloseTo(b.raw, 10);
+      expect(Math.ceil(b.raw)).toBe(b.score);
+      expect(b.score).toBe(chenScore(hand));
+    }
+  });
+
+  it('explains JTs and 22', () => {
+    expect(chenBreakdown('JTs').steps.map((s) => s.delta)).toEqual([6, 2, 1]);
+    expect(chenBreakdown('22').steps.map((s) => s.delta)).toEqual([2, 3]);
+    expect(chenBreakdown('72o').steps.map((s) => s.delta)).toEqual([3.5, -5]);
+  });
+
+  it('strengthRank: AA is 1, 169 distinct ranks', () => {
+    expect(strengthRank('AA')).toBe(1);
+    expect(new Set(ORDERED_HANDS.map(strengthRank)).size).toBe(169);
   });
 });
 

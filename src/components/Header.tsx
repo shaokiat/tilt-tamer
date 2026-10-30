@@ -1,4 +1,7 @@
 import { HowItWorks } from './Explainers';
+
+/** public/logo.svg, resolved against Vite's base so it works locally and on GitHub Pages. */
+const logoUrl = `${import.meta.env.BASE_URL}logo.svg`;
 import { Tip } from './Tip';
 
 interface Props {
@@ -10,9 +13,7 @@ export function Header({ source }: Props) {
   return (
     <header className="header">
       <div className="brand">
-        <span className="logo" aria-hidden>
-          ♠
-        </span>
+        <img className="logo" src={logoUrl} alt="" width={34} height={34} />
         <h1>
           Tilt Tamer <span className="h1-sub">preflop trainer</span>
         </h1>

@@ -91,10 +91,8 @@ kbd {
 .h1-sub { font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0.02em; }
 .header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .logo {
-  display: grid; place-items: center;
-  width: 32px; height: 32px; border-radius: 10px;
-  background: linear-gradient(135deg, #1f3a2f, #0f1f19);
-  border: 1px solid #2b4a3d; font-size: 17px;
+  display: block; width: 34px; height: 34px; border-radius: 9px;
+  box-shadow: 0 0 0 1px #2b4a3d, 0 6px 16px rgba(0, 0, 0, 0.35);
 }
 .chip {
   display: inline-flex; align-items: center; gap: 6px;

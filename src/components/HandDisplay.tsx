@@ -40,7 +40,7 @@ export function HandDisplay({ deal, dealId }: Props) {
         <span className="hand-class" data-testid="hand">
           {deal.hand}
         </span>
-        <span className="muted small">Folded to you in {deal.position}. Open or fold?</span>
+        <span className="muted small">Your move in {deal.position}: open or fold?</span>
       </div>
     </div>
   );

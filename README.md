@@ -1,6 +1,6 @@
-# Preflop Poker Trainer
+# Tilt Tamer
 
-Drill 6-max 100bb **open-raise (RFI)** decisions: get a random hand and position, choose Fold or Raise, and see whether you were right, the action frequencies, and the position's 13×13 range.
+A preflop poker trainer. Drill 6-max 100bb **open-raise (RFI)** decisions: get a random hand and position, choose Fold or Raise, and see whether you were right, the action frequencies, and the position's 13×13 range.
 
 > **Simplified ranges, not solver output.** The ranges are generated from the Chen formula (see `RANGES.md`). They're a teaching baseline, not GTO.
 

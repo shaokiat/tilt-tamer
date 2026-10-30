@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { accuracy, MIN_LEAK_ATTEMPTS, type Stats, type Tally } from '../lib/stats';
+import { accuracy, MAX_LEAKS, MIN_LEAK_ATTEMPTS, type Stats, type Tally } from '../lib/stats';
+import { Tip } from './Tip';
 import { CATEGORIES, POSITIONS, type Category } from '../lib/types';
 
 const CATEGORY_LABEL: Record<Category, string> = { pair: 'Pairs', suited: 'Suited', offsuit: 'Offsuit' };
@@ -100,7 +101,23 @@ export function StatsPanel({ stats, onReset }: Props) {
       </div>
 
       <div className="stat-group">
-        <h3>Leaks</h3>
+        <h3>
+          <Tip
+            placement="top"
+            align="start"
+            className="term-quiet leaks-tip"
+            label="How leaks are calculated"
+            content={
+              <span className="tip-text" data-testid="leaks-help">
+                Every answer is grouped by <b>position + hand type</b> (e.g. SB · offsuit). Groups with at least{' '}
+                <b>{MIN_LEAK_ATTEMPTS} attempts</b> are ranked by accuracy, lowest first, and the <b>{MAX_LEAKS}</b>{' '}
+                weakest are listed. Ties go to the group with more attempts. Accuracy counts Correct and Perfect as right.
+              </span>
+            }
+          >
+            Leaks <span aria-hidden>ⓘ</span>
+          </Tip>
+        </h3>
         {stats.leaks.length === 0 ? (
           <p className="muted small">
             Need at least {MIN_LEAK_ATTEMPTS} attempts in a position + hand-type combo.

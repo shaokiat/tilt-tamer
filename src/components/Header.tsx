@@ -13,7 +13,9 @@ export function Header({ source }: Props) {
         <span className="logo" aria-hidden>
           ♠
         </span>
-        <h1>Preflop Trainer</h1>
+        <h1>
+          Tilt Tamer <span className="h1-sub">preflop trainer</span>
+        </h1>
         <span className="chip">RFI · 6-max · 100bb</span>
       </div>
       <div className="header-right">

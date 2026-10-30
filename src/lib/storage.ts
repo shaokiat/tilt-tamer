@@ -4,7 +4,8 @@ import { ACTIONS, CATEGORIES, POSITIONS } from './types';
 
 export const ATTEMPTS_KEY = 'preflop-trainer:v1:attempts';
 export const SETTINGS_KEY = 'preflop-trainer:v1:settings';
-const MAX_STORED = 5000;
+/** Retention cap, applied both in memory and in storage so totals don't change on reload. */
+export const MAX_STORED = 5000;
 
 type KV = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 

@@ -4,6 +4,8 @@ A preflop poker trainer. Drill 6-max 100bb **open-raise (RFI)** decisions: get a
 
 > **Simplified ranges, not solver output.** The ranges are generated from the Chen formula (see `RANGES.md`). They're a teaching baseline, not GTO.
 
+**Live:** https://shaokiat.github.io/tilt-tamer/
+
 ## Run
 
 ```bash
@@ -12,6 +14,7 @@ npm run dev                 # http://localhost:5173
 npm test                    # Vitest: invariants, scoring, deal distribution, stats
 npm run generate            # regenerate src/data/ranges.json from RANGES.md §3
 npm run build               # typecheck + production build
+npm run deploy              # build and publish dist/ to the gh-pages branch (GitHub Pages)
 ```
 
 ## Controls
